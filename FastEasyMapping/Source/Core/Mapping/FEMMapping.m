@@ -4,6 +4,13 @@
 #import "FEMManagedObjectMapping.h"
 #import "FEMObjectMapping.h"
 
+@interface FEMMapping ()
+
+@property (nonatomic, strong) NSMutableDictionary *attributeMap;
+@property (nonatomic, strong) NSMutableDictionary *relationshipMap;
+
+@end
+
 @implementation FEMMapping
 
 #pragma mark - Init
@@ -154,8 +161,20 @@
     [self addRelationship:relationship];
 }
 
+- (void)addRecursiveRelationshipMappingForProperty:(NSString *)property keypath:(NSString *)keyPath {
+    FEMRelationship *relationship = [[FEMRelationship alloc] initWithProperty:property keyPath:keyPath mapping:self];
+    [self addRelationship:relationship];
+}
+
 - (void)addToManyRelationshipMapping:(FEMMapping *)mapping forProperty:(NSString *)property keyPath:(NSString *)keyPath {
     FEMRelationship *relationship = [[FEMRelationship alloc] initWithProperty:property keyPath:keyPath mapping:mapping];
+    relationship.toMany = YES;
+    [self addRelationship:relationship];
+}
+
+- (void)addRecursiveToManyRelationshipForProperty:(nonnull NSString *)property keypath:(nullable NSString *)keyPath
+{
+    FEMRelationship *relationship = [[FEMRelationship alloc] initWithProperty:property keyPath:keyPath mapping:self];
     relationship.toMany = YES;
     [self addRelationship:relationship];
 }
